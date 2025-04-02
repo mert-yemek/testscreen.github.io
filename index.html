@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilgisayar Donanım Test Merkezi</title>
+    <style>
+        /* --- TEMEL DEĞİŞKENLER (Koyu Tema Varsayılan) --- */
+        :root {
+            --bg-color: #1e1e1e;
+            --card-bg: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-secondary: #d0d0d0;
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --header-bg: #252525;
+            --nav-bg: #2a2a2a;
+            --footer-bg: #252525;
+            --dropdown-bg: #333333;
+            --modal-overlay: rgba(0,0,0,0.6); /* Koyu tema için overlay */
+        }
+
+        /* --- AÇIK TEMA DEĞİŞKENLERİ --- */
+        [data-theme="light"] {
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --text-color: #333333; /* Ana metin rengi (koyu) */
+            --text-secondary: #555555;
+            --primary-color: #3498db;
+            --primary-hover: #2980b9;
+            --header-bg: #2c3e50; /* Açık temada koyu header */
+            --nav-bg: #34495e; /* Açık temada koyu nav */
+            --footer-bg: #2c3e50; /* Açık temada koyu footer */
+            --dropdown-bg: #ffffff;
+            --modal-overlay: rgba(0,0,0,0.4); /* Açık tema için overlay */
+        }
+
+        /* --- GENEL STİLLER --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color); /* Body için ana metin rengi */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.6;
+        }
+
+        /* --- HEADER STİLLERİ --- */
+        header {
+            background-color: var(--header-bg);
+            color: var(--text-color); /* Varsayılan header metin rengi */
+            padding: 1rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Açık temada header metin rengini açık yap */
+        [data-theme="light"] header {
+            color: #f0f0f0;
+        }
+
+        .theme-switch {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-switch-label {
+            margin-right: 10px;
+            font-size: 0.9rem;
+             /* Renk header'dan miras alınır, açık tema için yukarıda ayarlandı */
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc; /* Default slider background */
+            transition: .4s;
+            border-radius: 30px;
+        }
+         /* Koyu temada slider arkaplanı */
+        [data-theme="dark"] .slider {
+             background-color: #555;
+        }
+         /* Açık temada slider arkaplanı (checkbox işaretli değilken) */
+        [data-theme="light"] input:not(:checked) + .slider {
+             background-color: #ccc;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "☀️"; /* Varsayılan (Açık tema ikonu) */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            color: #333; /* İkon rengi */
+        }
+
+        /* Checkbox işaretliyken (Koyu tema aktif) */
+        input:checked + .slider {
+            background-color: var(--primary-color); /* Koyu tema için aktif renk */
+        }
+        [data-theme="light"] input:checked + .slider {
+             background-color: #2c3e50; /* Açık tema seçiliyken koyu temanın aktif rengi */
+        }
+
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+            content: "🌙"; /* Koyu tema ikonu */
+        }
+
+        .logo {
+            max-width: 150px;
+            margin-bottom: 1rem;
+        }
+
+        /* --- NAVİGASYON STİLLERİ --- */
+        nav {
+            background-color: var(--nav-bg);
+            padding: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Küçük ekranlar için */
+        }
+
+        nav li {
+            margin: 0.2rem 1rem; /* Dikey boşluk eklendi */
+            position: relative;
+        }
+
+        nav a {
+            color: var(--text-color); /* Varsayılan nav metin rengi */
+            text-decoration: none;
+            padding: 0.5rem;
+            display: block;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+         /* Açık temada nav metin rengini açık yap */
+        [data-theme="light"] nav a {
+            color: #f0f0f0;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Koyu tema hover */
+            border-radius: 4px;
+        }
+        /* Açık tema hover */
+        [data-theme="light"] nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--dropdown-bg);
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content a {
+            /* Renk nav a'dan miras alınır veya dropdown-bg'ye göre ayarlanır */
+             color: var(--text-color); /* Dropdown içindeki metin rengi */
+             padding: 12px 16px;
+             text-decoration: none;
+             display: block;
+             text-align: left;
+        }
+        /* Açık temada dropdown metin rengi (arkaplan beyaz olduğu için koyu) */
+        [data-theme="light"] .dropdown-content a {
+             color: #333333;
+        }
+
+
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Koyu tema hover */
+        }
+         /* Açık tema dropdown hover */
+        [data-theme="light"] .dropdown-content a:hover {
+            background-color: #eee;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* --- ANA İÇERİK STİLLERİ --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .hero {
+            background-color: var(--primary-color);
+            color: white; /* Hero metni her zaman beyaz */
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .hero h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Min genişlik ayarlandı */
+            gap: 1.5rem;
+        }
+
+        .test-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            color: var(--text-color); /* Kart içindeki ana metin */
+        }
+
+        .test-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .test-card h3 {
+            margin-top: 0.5rem;
+            color: var(--text-color); /* Başlık rengi */
+        }
+
+        .test-card p {
+            color: var(--text-secondary); /* İkincil metin rengi */
+            margin-bottom: 1rem;
+        }
+
+        .test-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .test-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white; /* Buton metni hep beyaz */
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+            border: none; /* Butonlar için border kaldırma */
+            cursor: pointer; /* Butonlara cursor ekleme */
+        }
+
+        .test-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* --- FOOTER STİLLERİ --- */
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--text-color); /* Varsayılan footer metin rengi */
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Açık temada footer metin rengini açık yap */
+        [data-theme="light"] footer {
+            color: #f0f0f0;
+        }
+
+        /* --- POPUP MODAL STİLLERİ --- */
+        .modal {
+            /* display: none; Visibility JS ile kontrol edilecek */
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: var(--modal-overlay); /* Tema değişkeni kullanıldı */
+            /* İçeriği ortalamak için */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease; /* Geçiş eklendi */
+        }
+
+        .modal-content {
+            background-color: var(--card-bg); /* Tema değişkeni */
+            color: var(--text-color); /* Tema değişkeni */
+            margin: auto;
+            padding: 30px;
+            border: 1px solid rgba(136, 136, 136, 0.5); /* Sınır rengi ayarlandı */
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Geçiş eklendi */
+        }
+
+        .close-button {
+            color: var(--text-secondary); /* Tema değişkeni */
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.3s ease; /* Geçiş eklendi */
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--primary-color); /* Tema değişkeni */
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Modalı gizlemek için sınıf */
+        .modal.hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="theme-switch">
+            <span class="theme-switch-label">Tema:</span>
+            <label class="switch">
+                <input type="checkbox" id="theme-checkbox" onclick="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <img src="https://placehold.co/150x80/2c3e50/f0f0f0?text=Logo" alt="Bilgisayar Kasası" class="logo">
+        <h1>Bilgisayar Donanım Test Merkezi</h1> <p>Bilgisayarınızın tüm bileşenlerini kolayca test edin</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#">Ana Sayfa</a></li>
+            <li class="dropdown">
+                <a href="#">Testler</a>
+                <div class="dropdown-content">
+                    <a href="#">Ekran Testi</a>
+                    <a href="#">Klavye Testi</a>
+                    <a href="#">Fare Testi</a>
+                    <a href="#">Ses Testi</a>
+                    <a href="#">Ağ Hızı Testi</a>
+                    </div>
+            </li>
+            <li><a href="#">Hızlı Uygulama İndirme Yardımcısı</a></li>
+            <li><a href="#" id="about-link">Hakkımızda</a></li>
+            <li><a href="#">İletişim</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <h2>Bilgisayarınızın Performansını Hemen Test Edin</h2>
+            <p>Yeni bilgisayarınızın tüm bileşenlerinin doğru çalışıp çalışmadığını kontrol etmek için hızlı ve güvenilir testler.</p>
+        </section>
+
+        <div class="test-grid">
+            <div class="test-card">
+                <div class="test-icon">🖥️</div>
+                <h3>Ekran Testi</h3>
+                <p>Ekranınızın renk doğruluğunu, piksel hatalarını ve çözünürlük ayarlarını test edin.</p>
+                <a href="#" class="test-button">Testi Başlat</a>
+            </div>
+
+            <div class="test-card">
+                <div class="test-icon">⌨️</div>
+                <h3>Klavye Testi</h3>
+                <p>Tüm tuşların doğru çalışıp çalışmadığını ve gecikme süresini test edin.</p>
+                <a href="#" class="test-button">Testi Başlat</a>
+            </div>
+
+            <div class="test-card">
+                <div class="test-icon">🖱️</div>
+                <h3>Fare Testi</h3>
+                <p>Fare hareketlerini, tıklama doğruluğunu ve kaydırma işlevini test edin.</p>
+                <a href="#" class="test-button">Testi Başlat</a>
+            </div>
+
+            <div class="test-card">
+                <div class="test-icon">🔊</div>
+                <h3>Ses Testi</h3>
+                <p>Hoparlör çıkışını, mikrofon girişini ve ses kalitesini test edin.</p>
+                <a href="#" class="test-button">Testi Başlat</a>
+            </div>
+
+            <div class="test-card">
+                <div class="test-icon">🌐</div>
+                <h3>Ağ Hızı Testi</h3>
+                <p>İnternet bağlantınızın indirme ve yükleme hızlarını test edin.</p>
+                <a href="#" class="test-button">Testi Başlat</a>
+            </div>
+
+            <div class="test-card">
+                <div class="test-icon">📱</div>
+                <h3>Uygulamalar</h3>
+                <p>İhtiyacınız olabilecek faydalı uygulamalara hızlı erişim sağlayın.</p>
+                <a href="#" class="test-button">Uygulamalara Eriş</a>
+            </div>
+             </div>
+    </div>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Bilgisayar Donanım Test Merkezi | Tüm Hakları Saklıdır</p>
+    </footer>
+
+    <div id="popup-modal" class="modal hidden"> <div class="modal-content">
+            <span class="close-button">&times;</span> <p>Bu sayfa şu anda kullanılamıyor, daha sonra tekrar deneyiniz.</p>
+        </div>
+    </div>
+
+    <script>
+        const htmlElement = document.documentElement;
+        const themeCheckbox = document.getElementById('theme-checkbox');
+
+        // 1. Tema Değiştirme Fonksiyonu
+        function toggleTheme() {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme); // Tema tercihini kaydet
+            // Checkbox durumunu güncelle (checked = dark)
+            themeCheckbox.checked = (newTheme === 'dark');
+        }
+
+        // 2. Sayfa Yüklenince Tema ve Checkbox Durumunu Ayarla
+        function applyInitialTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            // Sistem tercihini kontrol et
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let currentTheme;
+
+            if (savedTheme) {
+                currentTheme = savedTheme;
+            } else {
+                currentTheme = prefersDark ? 'dark' : 'light';
+            }
+
+            htmlElement.setAttribute('data-theme', currentTheme);
+            // Checkbox durumunu ayarla (checked = dark)
+            themeCheckbox.checked = (currentTheme === 'dark');
+        }
+
+        // 3. Popup Modal İşlevi
+        const aboutLink = document.getElementById('about-link');
+        const popupModal = document.getElementById('popup-modal');
+        // Modal içindeki kapatma butonunu seç
+        const closeButton = popupModal ? popupModal.querySelector('.close-button') : null;
+
+        if (aboutLink && popupModal && closeButton) {
+            // "Hakkımızda" linkine tıklanınca
+            aboutLink.addEventListener('click', function(event) {
+                event.preventDefault(); // Linkin varsayılan davranışını engelle
+                popupModal.classList.remove('hidden'); // Modalı göster
+            });
+
+            // Kapatma butonuna tıklanınca
+            closeButton.addEventListener('click', function() {
+                popupModal.classList.add('hidden'); // Modalı gizle
+            });
+
+            // Modalın dışına (arka plana) tıklanınca
+            popupModal.addEventListener('click', function(event) {
+                // Sadece modalın kendisine (içeriğe değil) tıklandıysa kapat
+                if (event.target === popupModal) {
+                     popupModal.classList.add('hidden'); // Modalı gizle
+                }
+            });
+        } else {
+            // Elementler bulunamazsa konsola hata yazdır
+            if (!aboutLink) console.error("Hakkımızda linki bulunamadı!");
+            if (!popupModal) console.error("Popup modal bulunamadı!");
+            if (!closeButton) console.error("Kapatma butonu bulunamadı!");
+        }
+
+        // 4. Footer Yılını Ayarla
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // 5. Sayfa yüklendiğinde başlangıç temasını uygula
+        applyInitialTheme();
+
+    </script>
+</body>
+</html>
