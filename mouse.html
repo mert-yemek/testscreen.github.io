@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fare Testi - Bilgisayar Donanım Test Merkezi</title>
+    <style>
+        /* --- TEMEL DEĞİŞKENLER --- */
+        :root {
+            --bg-color: #1e1e1e; --card-bg: #2d2d2d; --text-color: #f0f0f0;
+            --text-secondary: #d0d0d0; --primary-color: #3498db; --primary-hover: #2980b9;
+            --header-bg: #252525; --nav-bg: #2a2a2a; --footer-bg: #252525;
+            --dropdown-bg: #333333; --modal-overlay: rgba(0,0,0,0.6);
+            --info-box-bg: #252525;
+            --mouse-bg: linear-gradient(to bottom, #5a5a5a, #404040);
+            --mouse-border: #666666;
+            --mouse-button-bg: #5a5a5a;
+            --mouse-button-pressed-bg: var(--primary-color);
+            --mouse-wheel-scrolled-bg: #e67e22;
+            --tracking-area-bg: #333333;
+            --tracking-area-border: #555555;
+            --clickable-area-bg: orange;
+            --clickable-area-hover-bg: #ff8c00;
+            --clickable-area-dblclick-bg: red; /* Çift tıklama rengi (kırmızı) */
+            --log-bg: #333333;
+            --log-border: #555555;
+            --wheel-pressed-border: var(--primary-hover); /* Tekerlek basılınca kenarlık */
+            --click-effect-color: rgba(255, 0, 0, 0.7); /* Tıklama efekti rengi */
+            --click-effect-shadow: rgba(255, 0, 0, 0.8);
+        }
+        /* --- AÇIK TEMA DEĞİŞKENLERİ --- */
+        [data-theme="light"] {
+            --bg-color: #f5f5f5; --card-bg: #ffffff; --text-color: #333333;
+            --text-secondary: #555555; --primary-color: #3498db; --primary-hover: #2980b9;
+            --header-bg: #2c3e50; --nav-bg: #34495e; --footer-bg: #2c3e50;
+            --dropdown-bg: #ffffff; --modal-overlay: rgba(0,0,0,0.4);
+            --info-box-bg: #eeeeee;
+            --mouse-bg: linear-gradient(to bottom, #e0e0e0, #c0c0c0); /* Gradient eklendi */
+            --mouse-border: #b0b0b0;
+            --mouse-button-bg: #c0c0c0;
+            --mouse-button-pressed-bg: var(--primary-color);
+            --mouse-wheel-scrolled-bg: #e67e22;
+            --tracking-area-bg: #f0f0f0;
+            --tracking-area-border: #cccccc;
+            --clickable-area-bg: orange;
+            --clickable-area-hover-bg: #ff8c00;
+            --clickable-area-dblclick-bg: red; /* Kırmızıya değiştirildi */
+            --log-bg: #f0f0f0;
+            --log-border: #cccccc;
+            --wheel-pressed-border: var(--primary-hover);
+             --click-effect-color: rgba(255, 0, 0, 0.6);
+            --click-effect-shadow: rgba(255, 0, 0, 0.7);
+        }
+        /* --- GENEL STİLLER --- */
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s ease, color 0.3s ease; line-height: 1.6; }
+        /* --- HEADER, NAV, FOOTER, MODAL STİLLERİ --- */
+        header { background-color: var(--header-bg); color: var(--text-color); padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; transition: background-color 0.3s ease, color 0.3s ease; }
+        [data-theme="light"] header { color: #f0f0f0; }
+        .theme-switch { position: absolute; top: 1rem; right: 1rem; display: flex; align-items: center; }
+        .theme-switch-label { margin-right: 10px; font-size: 0.9rem; }
+        .switch { position: relative; display: inline-block; width: 60px; height: 30px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 30px; }
+        [data-theme="dark"] .slider { background-color: #555; }
+        [data-theme="light"] input:not(:checked) + .slider { background-color: #ccc; }
+        .slider:before { position: absolute; content: "☀️"; display: flex; align-items: center; justify-content: center; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; color: #333; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        [data-theme="light"] input:checked + .slider { background-color: #2c3e50; }
+        input:checked + .slider:before { transform: translateX(30px); content: "🌙"; }
+        .logo { max-width: 150px; margin-bottom: 1rem; }
+        nav { background-color: var(--nav-bg); padding: 0.5rem; transition: background-color 0.3s ease; }
+        nav ul { list-style-type: none; margin: 0; padding: 0; display: flex; justify-content: center; flex-wrap: wrap; }
+        nav li { margin: 0.2rem 1rem; position: relative; }
+        nav a { color: var(--text-color); text-decoration: none; padding: 0.5rem; display: block; transition: color 0.3s ease, background-color 0.3s ease; border-radius: 4px; }
+        [data-theme="light"] nav a { color: #f0f0f0; }
+        nav a:hover { background-color: rgba(255, 255, 255, 0.1); }
+        [data-theme="light"] nav a:hover { background-color: rgba(255, 255, 255, 0.2); }
+        nav a.active { background-color: var(--primary-color); color: white; [data-theme="light"] & { color: white; } } /* Aktif link stili */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; background-color: var(--dropdown-bg); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 4px; left: 50%; transform: translateX(-50%); top: 100%; transition: background-color 0.3s ease; padding: 0.5rem 0; }
+        .dropdown-content a { color: var(--text-color); padding: 8px 16px; text-decoration: none; display: block; text-align: left; border-radius: 0; }
+        [data-theme="light"] .dropdown-content a { color: #333333; }
+        .dropdown-content a:hover { background-color: rgba(255, 255, 255, 0.1); }
+        [data-theme="light"] .dropdown-content a:hover { background-color: #eee; }
+        .dropdown:hover .dropdown-content { display: block; }
+        footer { background-color: var(--footer-bg); color: var(--text-color); text-align: center; padding: 1rem; margin-top: 2rem; transition: background-color 0.3s ease, color 0.3s ease; }
+        [data-theme="light"] footer { color: #f0f0f0; }
+        .modal { position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: var(--modal-overlay); display: flex; align-items: center; justify-content: center; transition: background-color 0.3s ease; }
+        .modal-content { background-color: var(--card-bg); color: var(--text-color); margin: auto; padding: 30px; border: 1px solid rgba(136, 136, 136, 0.5); width: 80%; max-width: 400px; border-radius: 8px; position: relative; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19); text-align: center; transition: background-color 0.3s ease, color 0.3s ease; }
+        .close-button { color: var(--text-secondary); position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; transition: color 0.3s ease; }
+        .close-button:hover, .close-button:focus { color: var(--primary-color); text-decoration: none; cursor: pointer; }
+        .modal.hidden { display: none; }
+        .hidden { display: none !important; }
+
+        /* --- ANA İÇERİK --- */
+        .container { max-width: 1200px; margin: 2rem auto; padding: 1.5rem; background-color: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .container h2 { margin-top: 0; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 1rem;}
+        .container h3 { margin-top: 0; }
+        .container p { color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.7; }
+
+        /* --- FARE TESTİNE ÖZEL STİLLER --- */
+        .mouse-test-area { display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start; }
+        .mouse-visual-section, .mouse-actions-section { flex: 1; min-width: 300px; }
+        .mouse-display-area { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin: 1rem 0; flex-wrap: wrap; }
+        .mouse-visual { width: 110px; height: 180px; background: var(--mouse-bg); border: 1px solid var(--mouse-border); border-radius: 60px / 90px; position: relative; display: flex; flex-direction: column; align-items: center; padding: 15px 5px 5px 5px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3), 0 2px 3px rgba(0,0,0,0.2); flex-shrink: 0; }
+        .mouse-button { width: 42%; height: 60px; background-color: var(--mouse-button-bg); border: 1px solid var(--mouse-border); margin-bottom: 5px; transition: background-color 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease; cursor: default; text-align: center; line-height: 60px; font-size: 0.85rem; color: var(--text-color); opacity: 0.9; box-shadow: inset 0 -2px 2px rgba(0,0,0,0.15); }
+        .mouse-button-row { display: flex; justify-content: space-between; width: 95%; }
+        #mouse-left-btn { border-radius: 30px 5px 5px 5px; margin-right: 2%; }
+        #mouse-right-btn { border-radius: 5px 30px 5px 5px; margin-left: 2%; }
+        #mouse-wheel { width: 18px; height: 35px; background: linear-gradient(to bottom, #6e6e6e, #4e4e4e); [data-theme="light"] & { background: linear-gradient(to bottom, #b0b0b0, #909090); } border: 1px solid var(--mouse-border); border-radius: 10px; margin: 6px 0; transition: background-color 0.2s ease, border-color 0.2s ease; position: relative; overflow: hidden; }
+        #mouse-wheel::before { content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 2px; height: 25px; background-color: rgba(0,0,0,0.2); [data-theme="light"] & { background-color: rgba(255,255,255,0.3); } }
+        .side-buttons-visual { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
+        #mouse-side1-btn, #mouse-side2-btn { width: 80px; height: 25px; line-height: 25px; font-size: 0.75rem; border-radius: 5px; }
+        .mouse-button.pressed { background-color: var(--mouse-button-pressed-bg); opacity: 1; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
+        #mouse-wheel.pressed { background-color: var(--mouse-button-pressed-bg); border-color: var(--wheel-pressed-border); opacity: 1; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
+        #mouse-wheel.scrolled { background-color: var(--mouse-wheel-scrolled-bg); opacity: 1; }
+        #tracking-area { width: 100%; height: 200px; background-color: var(--tracking-area-bg); border: 2px dashed var(--tracking-area-border); margin-top: 1rem; border-radius: 8px; position: relative; cursor: crosshair; overflow: hidden; }
+        #coords { position: absolute; bottom: 10px; left: 10px; background-color: rgba(0,0,0,0.5); [data-theme="light"] & { background-color: rgba(255,255,255,0.5); } color: var(--text-color); [data-theme="light"] & { color: var(--text-color); } padding: 5px 10px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; user-select: none; }
+        .double-click-section { margin-top: 2rem; }
+        #clickable-area { width: 100%; padding: 2rem 1rem; background-color: var(--clickable-area-bg); color: white; border-radius: 8px; text-align: center; cursor: pointer; transition: background-color 0.2s ease; user-select: none; margin-bottom: 1rem; }
+        #clickable-area:hover { background-color: var(--clickable-area-hover-bg); }
+        #clickable-area.double-clicked { background-color: var(--clickable-area-dblclick-bg); }
+        .click-stats { display: flex; justify-content: space-around; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+        .click-stats p { margin: 0; color: var(--text-secondary); font-size: 0.9em;}
+        .click-stats span { font-weight: bold; color: var(--text-color); font-size: 1.1em; }
+        #click-log { background-color: var(--log-bg); border: 1px solid var(--log-border); border-radius: 4px; padding: 0.5rem; height: 100px; overflow-y: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        #click-log div { margin-bottom: 0.2rem; }
+        #click-log .dblclick-log { color: var(--clickable-area-dblclick-bg); font-weight: bold; }
+        #reset-dblclick-btn { display: inline-block; background-color: #e74c3c; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; border: none; cursor: pointer; transition: background-color 0.3s ease; font-size: 0.9rem; }
+        #reset-dblclick-btn:hover { background-color: #c0392b; }
+        #mouse-info { background-color: var(--info-box-bg); padding: 1rem; border-radius: 6px; margin-top: 1rem; min-height: 40px; font-family: 'Courier New', Courier, monospace; color: var(--text-secondary); border: 1px solid var(--key-border); font-size: 0.9rem; }
+        #mouse-info p { margin: 0.3rem 0; }
+        #mouse-info strong { color: var(--primary-color); }
+        .click-effect { position: absolute; width: 25px; height: 25px; background-color: var(--click-effect-color); border-radius: 50%; transform: scale(0); animation: clickAnim 0.4s ease-out; pointer-events: none; box-shadow: 0 0 10px var(--click-effect-shadow); z-index: 9999; }
+        @keyframes clickAnim { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="theme-switch">
+            <span class="theme-switch-label">Tema:</span>
+            <label class="switch">
+                <input type="checkbox" id="theme-checkbox" onclick="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <img src="https://placehold.co/150x80/2c3e50/f0f0f0?text=Logo" alt="Bilgisayar Kasası" class="logo">
+        <h1>Bilgisayar Donanım Test Merkezi</h1>
+        <p>Fare Testi</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Ana Sayfa</a></li>
+            <li class="dropdown">
+                <a href="#">Testler</a>
+                <div class="dropdown-content">
+                    <a href="ekran.html">Ekran Testi</a>
+                    <a href="klavye.html">Klavye Testi</a>
+                    <a href="mouse.html" class="active">Fare Testi</a> <a href="#" class="unavailable-link">Ses Testi</a>
+                    <a href="#" class="unavailable-link">Ağ Hızı Testi</a>
+                </div>
+            </li>
+            <li><a href="#" class="unavailable-link">Hızlı Uygulama İndirme Yardımcısı</a></li>
+            <li><a href="#" id="about-link" class="unavailable-link">Hakkımızda</a></li>
+            <li><a href="#" class="unavailable-link">İletişim</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Fare Testi</h2>
+        <p>Bu bölümde farenizin düğmelerinin, tekerleğinin, hareket algılamasının ve çift tıklama hassasiyetinin doğru çalışıp çalışmadığını kontrol edebilirsiniz. Sayfada herhangi bir yere tıkladığınızda görsel bir efekt belirecektir.</p>
+
+        <div class="mouse-test-area">
+            <div class="mouse-visual-section">
+                <h3>Düğme ve Tekerlek Testi</h3>
+                <p>Farenizin düğmelerine tıklayın ve tekerleği çevirin. İlgili bölüm aşağıdaki görselde vurgulanacaktır. Yan tuşların varsayılan tarayıcı eylemleri (ileri/geri) engellenmiştir.</p>
+                <div class="mouse-display-area">
+                    <div class="mouse-visual">
+                        <div class="mouse-button-row">
+                            <div id="mouse-left-btn" class="mouse-button">Sol</div>
+                            <div id="mouse-right-btn" class="mouse-button">Sağ</div>
+                        </div>
+                        <div id="mouse-wheel" class="mouse-button">Tekerlek</div>
+                        </div>
+                    <div class="side-buttons-visual">
+                        <div id="mouse-side1-btn" class="mouse-button">Yan 1 (X1)</div>
+                        <div id="mouse-side2-btn" class="mouse-button">Yan 2 (X2)</div>
+                    </div>
+                </div>
+                 <div id="mouse-info">
+                     <p>Son Eylem: <strong id="last-action">-</strong></p>
+                 </div>
+            </div>
+
+            <div class="mouse-actions-section">
+                <h3>Hareket Algılama</h3>
+                <p>Farenizi aşağıdaki çizgili alan içinde hareket ettirin. Koordinatların sorunsuz bir şekilde güncellendiğini kontrol edin.</p>
+                <div id="tracking-area">
+                    <span id="coords">X: 0, Y: 0</span>
+                </div>
+
+                <div class="double-click-section">
+                    <h3 style="margin-top: 2rem;">Çift Tıklama Testi</h3>
+                    <p>Aşağıdaki turuncu alana hızlıca sol veya sağ tıklayarak çift tıklama hızınızı test edin. Hızlı çift tıklama algılandığında alan kırmızıya dönecektir. Tıklamalar arasındaki süre farkı loglanır.</p>
+                    <div id="clickable-area">
+                        Buraya Tıklayın (Sol veya Sağ)
+                    </div>
+                    <div class="click-stats">
+                        <p>Sol Tık: <span id="left-click-count">0</span></p>
+                        <p>Sol Çift Tık: <span id="left-double-click-count">0</span></p>
+                        <p>Sağ Tık: <span id="right-click-count">0</span></p>
+                        <p>Sağ Çift Tık: <span id="right-double-click-count">0</span></p>
+                    </div>
+                    <div id="click-log" title="Tıklamalar Arası Süre (ms)">
+                        </div>
+                    <div style="text-align: center;">
+                         <button id="reset-dblclick-btn">Çift Tıklama Testini Sıfırla</button>
+                    </div>
+                </div>
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Bilgisayar Donanım Test Merkezi | Tüm Hakları Saklıdır</p>
+    </footer>
+
+    <div id="popup-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="popup-message">Bu sayfa henüz kullanılamıyor, daha sonra tekrar deneyiniz.</p>
+        </div>
+    </div>
+
+    <script>
+        const htmlElement = document.documentElement;
+        const themeCheckbox = document.getElementById('theme-checkbox');
+        // Fare Görseli Elementleri
+        const mouseLeftBtn = document.getElementById('mouse-left-btn');
+        const mouseRightBtn = document.getElementById('mouse-right-btn');
+        const mouseWheel = document.getElementById('mouse-wheel');
+        const mouseSide1Btn = document.getElementById('mouse-side1-btn');
+        const mouseSide2Btn = document.getElementById('mouse-side2-btn');
+        const lastActionDisplay = document.getElementById('last-action');
+        // Hareket Alanı Elementleri
+        const trackingArea = document.getElementById('tracking-area');
+        const coordsDisplay = document.getElementById('coords');
+        // Yeni Çift Tıklama Elementleri
+        const clickableArea = document.getElementById('clickable-area');
+        const leftClickCountSpan = document.getElementById('left-click-count');
+        const leftDoubleClickCountSpan = document.getElementById('left-double-click-count');
+        const rightClickCountSpan = document.getElementById('right-click-count');
+        const rightDoubleClickCountSpan = document.getElementById('right-double-click-count');
+        const clickLogDiv = document.getElementById('click-log');
+        const resetDblClickBtn = document.getElementById('reset-dblclick-btn');
+        // Popup Modal Elementleri
+        const popupModal = document.getElementById('popup-modal');
+        const popupMessage = document.getElementById('popup-message');
+        const closePopupBtn = popupModal ? popupModal.querySelector('.close-button') : null;
+        // Kullanılamayan Linkler
+        const unavailableLinks = document.querySelectorAll('.unavailable-link');
+
+        // --- Tema İşlevi ---
+        function toggleTheme() { const currentTheme = htmlElement.getAttribute('data-theme'); const newTheme = currentTheme === 'dark' ? 'light' : 'dark'; htmlElement.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); themeCheckbox.checked = (newTheme === 'dark'); }
+        function applyInitialTheme() { const savedTheme = localStorage.getItem('theme'); const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; let currentTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light'); htmlElement.setAttribute('data-theme', currentTheme); themeCheckbox.checked = (currentTheme === 'dark'); }
+        document.getElementById('year').textContent = new Date().getFullYear();
+        applyInitialTheme();
+
+        // --- Popup Modal İşlevi ---
+        function showPopup(message) { if(popupModal && popupMessage) { popupMessage.textContent = message; popupModal.classList.remove('hidden'); } }
+        function hidePopup() { if(popupModal) { popupModal.classList.add('hidden'); } }
+        if (closePopupBtn) { closePopupBtn.addEventListener('click', hidePopup); }
+        if (popupModal) { popupModal.addEventListener('click', function(event) { if (event.target === popupModal) { hidePopup(); } }); }
+        unavailableLinks.forEach(link => { link.addEventListener('click', (event) => { event.preventDefault(); const message = 'Bu sayfa henüz kullanılamıyor, daha sonra tekrar deneyiniz.'; showPopup(message); }); });
+
+        // --- FARE TESTİ İŞLEVLERİ ---
+        function updateLastAction(action) { if (lastActionDisplay) { lastActionDisplay.textContent = action; } }
+
+        // Fare tuşuna basıldığında (Görsel Fare için)
+        document.addEventListener('mousedown', (event) => {
+            let targetElement = null; let actionText = ''; let preventDefault = false;
+            if (clickableArea && clickableArea.contains(event.target)) { return; }
+            switch (event.button) {
+                case 0: targetElement = mouseLeftBtn; actionText = 'Sol Tuşa Basıldı'; break;
+                case 1: targetElement = mouseWheel; actionText = 'Orta Tuşa (Tekerlek) Basıldı'; break;
+                case 2: targetElement = mouseRightBtn; actionText = 'Sağ Tuşa Basıldı'; break;
+                case 3: targetElement = mouseSide1Btn; actionText = 'Yan Tuş 1 (X1) Basıldı'; preventDefault = true; break;
+                case 4: targetElement = mouseSide2Btn; actionText = 'Yan Tuş 2 (X2) Basıldı'; preventDefault = true; break;
+                default: actionText = `Bilinmeyen Tuş (${event.button}) Basıldı`;
+            }
+            if (targetElement) { targetElement.classList.add('pressed'); }
+            updateLastAction(actionText);
+            if (preventDefault) { event.preventDefault(); }
+        });
+        // Fare tuşu bırakıldığında (Görsel Fare için)
+        document.addEventListener('mouseup', (event) => {
+             if (clickableArea && clickableArea.contains(event.target)) { return; }
+             let targetElement = null;
+             switch (event.button) {
+                case 0: targetElement = mouseLeftBtn; break;
+                case 1: targetElement = mouseWheel; break;
+                case 2: targetElement = mouseRightBtn; break;
+                case 3: targetElement = mouseSide1Btn; break;
+                case 4: targetElement = mouseSide2Btn; break;
+             }
+             if (targetElement) { targetElement.classList.remove('pressed'); }
+        });
+        // Fare tekerleği döndürüldüğünde
+        document.addEventListener('wheel', (event) => {
+            let actionText = '';
+            if (event.deltaY < 0) { actionText = 'Tekerlek Yukarı Kaydırıldı'; }
+            else if (event.deltaY > 0) { actionText = 'Tekerlek Aşağı Kaydırıldı'; }
+            if (mouseWheel && actionText) { mouseWheel.classList.add('scrolled'); setTimeout(() => { mouseWheel.classList.remove('scrolled'); }, 300); }
+            updateLastAction(actionText);
+        });
+        // Fare hareket ettiğinde
+        if (trackingArea && coordsDisplay) { trackingArea.addEventListener('mousemove', (event) => { const rect = trackingArea.getBoundingClientRect(); const x = event.clientX - rect.left; const y = event.clientY - rect.top; coordsDisplay.textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`; }); }
+
+        // --- ÇİFT TIKLAMA TESTİ MANTIĞI ---
+        let leftClickCount = 0; let leftDoubleClickCount = 0; let lastLeftClickTime = 0;
+        let rightClickCount = 0; let rightDoubleClickCount = 0; let lastRightClickTime = 0;
+        const doubleClickThreshold = 400; // ms
+        function logToDiv(message, isDoubleClick = false) { if (!clickLogDiv) return; const logEntry = document.createElement('div'); logEntry.textContent = message; if (isDoubleClick) { logEntry.classList.add('dblclick-log'); } if (clickLogDiv.firstChild) { clickLogDiv.insertBefore(logEntry, clickLogDiv.firstChild); } else { clickLogDiv.appendChild(logEntry); } clickLogDiv.scrollTop = 0; }
+        function triggerDoubleClickFeedback() { if (!clickableArea) return; clickableArea.classList.add('double-clicked'); setTimeout(() => { clickableArea.classList.remove('double-clicked'); }, 500); }
+        if (clickableArea && leftClickCountSpan && leftDoubleClickCountSpan && rightClickCountSpan && rightDoubleClickCountSpan && clickLogDiv && resetDblClickBtn) {
+            clickableArea.addEventListener('mousedown', (event) => {
+                const currentTime = performance.now(); let diff; let logMessage; let isDblClick = false;
+                if (event.button === 0) {
+                    diff = currentTime - lastLeftClickTime; leftClickCount++; leftClickCountSpan.textContent = leftClickCount; logMessage = `Sol Tıklama ${leftClickCount}: ${diff.toFixed(2)} ms`;
+                    if (diff <= doubleClickThreshold && leftClickCount > 1) { leftDoubleClickCount++; leftDoubleClickCountSpan.textContent = leftDoubleClickCount; logMessage += ' (Sol Çift Tıklama!)'; isDblClick = true; triggerDoubleClickFeedback(); } else { clickableArea.classList.remove('double-clicked'); }
+                    lastLeftClickTime = currentTime;
+                } else if (event.button === 2) {
+                    diff = currentTime - lastRightClickTime; rightClickCount++; rightClickCountSpan.textContent = rightClickCount; logMessage = `Sağ Tıklama ${rightClickCount}: ${diff.toFixed(2)} ms`;
+                    if (diff <= doubleClickThreshold && rightClickCount > 1) { rightDoubleClickCount++; rightDoubleClickCountSpan.textContent = rightDoubleClickCount; logMessage += ' (Sağ Çift Tıklama!)'; isDblClick = true; triggerDoubleClickFeedback(); } else { clickableArea.classList.remove('double-clicked'); }
+                    lastRightClickTime = currentTime;
+                }
+                if(logMessage) { logToDiv(logMessage, isDblClick); }
+            });
+             clickableArea.addEventListener('contextmenu', (event) => { event.preventDefault(); }); // Sağ tıklama menüsünü engelle
+            resetDblClickBtn.addEventListener('click', () => {
+                leftClickCount = 0; leftDoubleClickCount = 0; lastLeftClickTime = 0; rightClickCount = 0; rightDoubleClickCount = 0; lastRightClickTime = 0;
+                leftClickCountSpan.textContent = '0'; leftDoubleClickCountSpan.textContent = '0'; rightClickCountSpan.textContent = '0'; rightDoubleClickCountSpan.textContent = '0';
+                clickLogDiv.innerHTML = ''; clickableArea.classList.remove('double-clicked'); updateLastAction('Çift Tıklama Testi Sıfırlandı');
+            });
+        } else { console.error("Çift tıklama test elementleri bulunamadı!"); }
+
+        // --- Tıklama Efekti İşlevi ---
+        document.addEventListener('click', function(event) {
+            const effect = document.createElement('div'); effect.classList.add('click-effect'); document.body.appendChild(effect);
+            const size = 25; effect.style.left = `${event.pageX - size / 2}px`; effect.style.top = `${event.pageY - size / 2}px`;
+            effect.addEventListener('animationend', function() { effect.remove(); });
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ekran Testi - Bilgisayar Donanım Test Merkezi</title>
+    <style>
+        /* --- TEMEL DEĞİŞKENLER --- */
+        :root {
+            --bg-color: #1e1e1e; --card-bg: #2d2d2d; --text-color: #f0f0f0;
+            --text-secondary: #d0d0d0; --primary-color: #3498db; --primary-hover: #2980b9;
+            --header-bg: #252525; --nav-bg: #2a2a2a; --footer-bg: #252525;
+            --dropdown-bg: #333333; --modal-overlay: rgba(0,0,0,0.6);
+            --info-box-bg: #252525;
+            --test-overlay-bg: #000000; --quick-test-btn-bg: #e67e22;
+            --quick-test-btn-hover-bg: #d35400;
+            --scroll-btn-bg: #1abc9c;
+            --scroll-btn-hover-bg: #16a085;
+            --intro-bg: rgba(0, 0, 0, 0.75);
+            --intro-text: #f0f0f0;
+            --warning-text: #e74c3c;
+        }
+        /* --- AÇIK TEMA DEĞİŞKENLERİ --- */
+        [data-theme="light"] {
+            --bg-color: #f5f5f5; --card-bg: #ffffff; --text-color: #333333;
+            --text-secondary: #555555; --primary-color: #3498db; --primary-hover: #2980b9;
+            --header-bg: #2c3e50; --nav-bg: #34495e; --footer-bg: #2c3e50;
+            --dropdown-bg: #ffffff; --modal-overlay: rgba(0,0,0,0.4);
+            --info-box-bg: #eeeeee;
+            --test-overlay-bg: #ffffff; --quick-test-btn-bg: #e67e22;
+            --quick-test-btn-hover-bg: #d35400;
+             --scroll-btn-bg: #1abc9c;
+            --scroll-btn-hover-bg: #16a085;
+            --intro-bg: rgba(255, 255, 255, 0.85);
+            --intro-text: #333333;
+            --warning-text: #c0392b;
+        }
+        /* --- GENEL STİLLER --- */
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s ease, color 0.3s ease; line-height: 1.6; }
+        /* --- HEADER, NAV, FOOTER, MODAL STİLLERİ --- */
+        header { background-color: var(--header-bg); color: var(--text-color); padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; transition: background-color 0.3s ease, color 0.3s ease; }
+        [data-theme="light"] header { color: #f0f0f0; }
+        .theme-switch { position: absolute; top: 1rem; right: 1rem; display: flex; align-items: center; }
+        .theme-switch-label { margin-right: 10px; font-size: 0.9rem; }
+        .switch { position: relative; display: inline-block; width: 60px; height: 30px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 30px; }
+        [data-theme="dark"] .slider { background-color: #555; }
+        [data-theme="light"] input:not(:checked) + .slider { background-color: #ccc; }
+        .slider:before { position: absolute; content: "☀️"; display: flex; align-items: center; justify-content: center; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; color: #333; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        [data-theme="light"] input:checked + .slider { background-color: #2c3e50; }
+        input:checked + .slider:before { transform: translateX(30px); content: "🌙"; }
+        .logo { max-width: 150px; margin-bottom: 1rem; }
+        nav { background-color: var(--nav-bg); padding: 0.5rem; transition: background-color 0.3s ease; }
+        nav ul { list-style-type: none; margin: 0; padding: 0; display: flex; justify-content: center; flex-wrap: wrap; }
+        nav li { margin: 0.2rem 1rem; position: relative; }
+        nav a { color: var(--text-color); text-decoration: none; padding: 0.5rem; display: block; transition: color 0.3s ease, background-color 0.3s ease; border-radius: 4px; }
+        [data-theme="light"] nav a { color: #f0f0f0; }
+        nav a:hover { background-color: rgba(255, 255, 255, 0.1); }
+        [data-theme="light"] nav a:hover { background-color: rgba(255, 255, 255, 0.2); }
+        nav a.active { background-color: var(--primary-color); color: white; [data-theme="light"] & { color: white; } } /* Aktif link stili */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; background-color: var(--dropdown-bg); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 4px; left: 50%; transform: translateX(-50%); top: 100%; transition: background-color 0.3s ease; padding: 0.5rem 0; }
+        .dropdown-content a { color: var(--text-color); padding: 8px 16px; text-decoration: none; display: block; text-align: left; border-radius: 0; }
+        [data-theme="light"] .dropdown-content a { color: #333333; }
+        .dropdown-content a:hover { background-color: rgba(255, 255, 255, 0.1); }
+        [data-theme="light"] .dropdown-content a:hover { background-color: #eee; }
+        .dropdown:hover .dropdown-content { display: block; }
+        footer { background-color: var(--footer-bg); color: var(--text-color); text-align: center; padding: 1rem; margin-top: 2rem; transition: background-color 0.3s ease, color 0.3s ease; }
+        [data-theme="light"] footer { color: #f0f0f0; }
+        .modal { position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: var(--modal-overlay); display: flex; align-items: center; justify-content: center; transition: background-color 0.3s ease; }
+        .modal-content { background-color: var(--card-bg); color: var(--text-color); margin: auto; padding: 30px; border: 1px solid rgba(136, 136, 136, 0.5); width: 80%; max-width: 400px; border-radius: 8px; position: relative; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19); text-align: center; transition: background-color 0.3s ease, color 0.3s ease; }
+        .close-button { color: var(--text-secondary); position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; transition: color 0.3s ease; }
+        .close-button:hover, .close-button:focus { color: var(--primary-color); text-decoration: none; cursor: pointer; }
+        .modal.hidden { display: none; }
+        .hidden { display: none !important; }
+
+        /* --- ANA İÇERİK --- */
+        .container { max-width: 1200px; margin: 2rem auto; padding: 1.5rem; background-color: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .container h2 { margin-top: 0; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 1rem;}
+        .container h3 { margin-top: 0; }
+        .container p { color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.7; }
+        .container ul { padding-left: 20px; color: var(--text-secondary); }
+        .container li { margin-bottom: 0.5rem; }
+        .container strong { color: var(--text-color); }
+
+        /* --- EKRAN TESTİNE ÖZEL STİLLER --- */
+         #quick-test-btn, #scroll-to-hz-info-btn { display: block; width: 100%; color: white; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.3s ease; font-weight: 600; font-size: 1.1rem; border: none; cursor: pointer; text-align: center; }
+        #quick-test-btn { background-color: var(--quick-test-btn-bg); margin-bottom: 0.75rem; }
+        #quick-test-btn:hover { background-color: var(--quick-test-btn-hover-bg); }
+        #scroll-to-hz-info-btn { background-color: var(--scroll-btn-bg); margin-bottom: 2rem; font-size: 1rem; padding: 0.6rem 1.5rem; }
+        #scroll-to-hz-info-btn:hover { background-color: var(--scroll-btn-hover-bg); }
+
+        .test-section { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
+        .test-section:last-child { border-bottom: none; }
+
+        .test-controls button { display: inline-block; background-color: var(--primary-color); color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; margin: 0.5rem 0.5rem 0.5rem 0; transition: background-color 0.3s ease; font-weight: 500; border: none; cursor: pointer; font-size: 0.95rem; }
+        .test-controls button:hover { background-color: var(--primary-hover); }
+        .test-controls .red-btn { background-color: #e74c3c; } .test-controls .red-btn:hover { background-color: #c0392b; }
+        .test-controls .green-btn { background-color: #2ecc71; } .test-controls .green-btn:hover { background-color: #27ae60; }
+        .test-controls .blue-btn { background-color: #3498db; } .test-controls .blue-btn:hover { background-color: #2980b9; }
+        .test-controls .black-btn { background-color: #34495e; color: white;} .test-controls .black-btn:hover { background-color: #2c3e50; }
+        .test-controls .white-btn { background-color: #ecf0f1; color: #333; border: 1px solid #bdc3c7;} .test-controls .white-btn:hover { background-color: #bdc3c7; }
+
+        /* --- TAM EKRAN TEST ALANI --- */
+        #screen-test-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--test-overlay-bg); z-index: 1000; display: flex; align-items: center; justify-content: center; cursor: default; visibility: hidden; opacity: 0; transition: opacity 0.3s ease, visibility 0.3s ease; overflow: hidden; }
+        #screen-test-overlay.visible { visibility: visible; opacity: 1; }
+        .grid-pattern { background-image: linear-gradient(to right, grey 1px, transparent 1px), linear-gradient(to bottom, grey 1px, transparent 1px); background-size: 20px 20px; }
+        .gradient-pattern { background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); }
+        .bw-gradient-pattern { background: linear-gradient(to right, black, white); }
+        #intro-message { color: var(--intro-text); background-color: var(--intro-bg); padding: 30px 40px; border-radius: 8px; max-width: 600px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1001; transition: background-color 0.3s ease, color 0.3s ease; }
+        #intro-message h2 { margin-top: 0; margin-bottom: 1rem; color: var(--primary-color); }
+        #intro-message p { margin-bottom: 0.8rem; color: inherit; }
+        #intro-message p.warning { color: var(--warning-text); font-weight: bold; margin-top: 1rem; }
+        #intro-message p.continue-prompt { margin-top: 1.5rem; font-style: italic; }
+        #intro-message.hidden { display: none; }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="theme-switch">
+            <span class="theme-switch-label">Tema:</span>
+            <label class="switch">
+                <input type="checkbox" id="theme-checkbox" onclick="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <img src="https://placehold.co/150x80/2c3e50/f0f0f0?text=Logo" alt="Bilgisayar Kasası" class="logo">
+        <h1>Bilgisayar Donanım Test Merkezi</h1>
+        <p>Ekran Testi</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Ana Sayfa</a></li>
+            <li class="dropdown">
+                <a href="#">Testler</a>
+                <div class="dropdown-content">
+                    <a href="ekran.html" class="active">Ekran Testi</a> <a href="klavye.html">Klavye Testi</a>
+                    <a href="mouse.html">Fare Testi</a>
+                    <a href="#" class="unavailable-link">Ses Testi</a>
+                    <a href="#" class="unavailable-link">Ağ Hızı Testi</a>
+                </div>
+            </li>
+            <li class="unavailable-link"><a href="#">Hızlı Uygulama İndirme Yardımcısı</a></li>
+            <li><a href="#" id="about-link" class="unavailable-link">Hakkımızda</a></li>
+            <li class="unavailable-link"><a href="#">İletişim</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Ekran Testi</h2>
+
+        <button id="quick-test-btn" onclick="startQuickTest()">Hızlı Ekran Testi - TAM EKRAN</button>
+        <button id="scroll-to-hz-info-btn">Ekran Hızı (Hz) Bilgisine Git &#x21E9;</button>
+
+        <p style="margin-bottom: 2rem;">Aşağıdaki butonlarla tekil testleri başlatabilir veya yukarıdaki hızlı test butonu ile tüm temel testleri (Siyah, Beyaz, Kırmızı, Yeşil, Mavi, Renk Geçişi, Izgara) tam ekranda sıralı olarak görebilirsiniz. Hızlı test sırasında Sağ Ok, Space veya Enter tuşları ile sonraki adıma, Sol Ok tuşu ile önceki adıma geçebilirsiniz. Testten çıkmak için ESC tuşuna basın.</p>
+
+        <div class="test-section">
+            <h3>Ölü Piksel / Bulutlanma / Hayalet Ekran (Ghosting) / Işık Sızması Testi (Tekil)</h3>
+            <p>
+                Ekranı farklı düz renklerle doldurarak çeşitli sorunları kontrol edin:
+                <ul>
+                    <li><strong>Ölü/Takılı Pikseller:</strong> Ekranda sürekli siyah, beyaz veya farklı renkte görünen noktalar arayın.</li>
+                    <li><strong>Bulutlanma (Clouding):</strong> Özellikle siyah veya koyu renkli ekranlarda parlaklığın eşit dağılmaması, bulut veya leke gibi görünen alanlar olup olmadığına bakın (LCD/LED panellerde görülebilir).</li>
+                    <li><strong>Işık Sızması (Backlight Bleed):</strong> Özellikle karanlık bir odada siyah ekranda, kenarlardan veya köşelerden ışık sızıp sızmadığını kontrol edin (LCD/LED panellerde görülebilir).</li>
+                    <li><strong>Hayalet Ekran (Ghosting):</strong> Bu test statik renklerle doğrudan görülemese de, renkler arasında geçiş yaparken önceki görüntünün kısa bir süre ekranda kalıp kalmadığına dikkat edebilirsiniz (Hızlı testte daha belirgin olabilir).</li>
+                </ul>
+                 Testten çıkmak için ESC tuşuna basın.
+             </p>
+            <div class="test-controls">
+                <button onclick="startIndividualTest('red')" class="red-btn">Kırmızı</button>
+                <button onclick="startIndividualTest('lime')" class="green-btn">Yeşil</button>
+                <button onclick="startIndividualTest('blue')" class="blue-btn">Mavi</button>
+                <button onclick="startIndividualTest('black')" class="black-btn">Siyah</button>
+                <button onclick="startIndividualTest('white')" class="white-btn">Beyaz</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Renk Geçişi (Gradient) Testi (Tekil)</h3>
+            <p>Renklerin yumuşak geçişini kontrol edin, çizgilenme (banding) olup olmadığına bakın. Testten çıkmak için ESC tuşuna basın.</p>
+            <div class="test-controls">
+                <button onclick="startIndividualTest('gradient')">Renk Geçişi</button>
+                <button onclick="startIndividualTest('bw_gradient')">Siyah-Beyaz Geçiş</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>Izgara Deseni Testi (Tekil)</h3>
+            <p>Ekran geometrisini ve ince çizgileri kontrol edin. Testten çıkmak için ESC tuşuna basın.</p>
+             <div class="test-controls">
+                <button onclick="startIndividualTest('grid')">Izgara Göster</button>
+            </div>
+        </div>
+
+        <div class="test-section" id="hz-info-section">
+            <h3>Ekran Yenileme Hızı (Hz) Nasıl Öğrenilir?</h3>
+            <p>Ekran yenileme hızı (Hertz veya Hz cinsinden ölçülür), monitörünüzün saniyede kaç kez görüntüyü tazelediğini belirtir. Daha yüksek Hz değerleri genellikle daha akıcı bir görüntü anlamına gelir. Bu web sayfası yenileme hızını doğrudan ölçemez ancak aşağıdaki adımlarla işletim sisteminizden öğrenebilirsiniz:</p>
+            <ul>
+                <li><strong>Windows 10/11:</strong> <ol><li>Masaüstüne sağ tıklayın ve "Görüntü ayarları"nı seçin.</li><li>"Gelişmiş görüntü ayarları"na tıklayın.</li><li>"Yenileme hızını seçin" başlığı altındaki açılır menüden mevcut hızı görebilir ve desteklenen diğer hızları seçebilirsiniz.</li></ol></li>
+                <li><strong>macOS (Ventura ve sonrası):</strong> <ol><li>Apple menüsünden "Sistem Ayarları"nı açın.</li><li>Kenar çubuğunda "Ekranlar"ı tıklayın.</li><li>Monitörünüzü seçin (birden fazla varsa).</li><li>"Yenileme Hızı" açılır menüsünden mevcut hızı görebilir ve değiştirebilirsiniz.</li></ol></li>
+                 <li><strong>macOS (Monterey ve öncesi):</strong> <ol><li>Apple menüsünden "Sistem Tercihleri"ni açın.</li><li>"Ekranlar"ı tıklayın.</li><li>"Ekran" sekmesinde, "Yenileme Hızı" açılır menüsünü bulun (Option tuşuna basılı tutarak "Ölçekli" seçeneğini seçmeniz gerekebilir).</li></ol></li>
+                <li><strong>Linux (Gnome, KDE vb.):</strong> <ol><li>Genellikle sistem ayarlarınızdaki "Ekran" veya "Görüntü" bölümünde bulunur.</li><li>Kullandığınız masaüstü ortamına (Gnome, KDE Plasma, XFCE vb.) göre adımlar biraz değişebilir.</li><li>Çözünürlük ayarlarının yanında genellikle "Yenileme Hızı" veya "Refresh Rate" seçeneğini bulabilirsiniz.</li></ol></li>
+            </ul>
+            <p><strong>Not:</strong> Monitörünüzün ve ekran kartınızın desteklediği en yüksek yenileme hızını kullanmak için bazen ekran kartı sürücü yazılımından (NVIDIA Kontrol Paneli, AMD Software) ek ayar yapmanız gerekebilir.</p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Bilgisayar Donanım Test Merkezi | Tüm Hakları Saklıdır</p>
+    </footer>
+
+    <div id="screen-test-overlay">
+         <div id="intro-message" class="hidden"> <h2>Hızlı Ekran Testi Başlıyor</h2>
+            <p>Lütfen başlamadan önce ekranınızın temiz olduğundan emin olun.</p>
+            <p>Sağ Ok (→) / Space / Enter: Sonraki Test</p>
+            <p>Sol Ok (←): Önceki Test</p>
+            <p>ESC: Testten Çıkış</p>
+            <p class="warning">Uyarı: Hızlı renk değişimleri veya desenler bazı kullanıcılarda (örneğin epilepsi hastalarında) rahatsızlığa neden olabilir. Dikkatli olun.</p>
+            <p class="continue-prompt">Devam etmek için Sağ Ok, Space veya Enter tuşuna basın.</p>
+        </div>
+    </div>
+
+    <div id="popup-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="popup-message">Bu sayfa henüz kullanılamıyor, daha sonra tekrar deneyiniz.</p>
+        </div>
+    </div>
+
+    <script>
+        const htmlElement = document.documentElement;
+        const themeCheckbox = document.getElementById('theme-checkbox');
+        const screenTestOverlay = document.getElementById('screen-test-overlay');
+        const introMessage = document.getElementById('intro-message');
+        const scrollToHzInfoBtn = document.getElementById('scroll-to-hz-info-btn');
+        const hzInfoSection = document.getElementById('hz-info-section');
+        // Popup Modal Elementleri
+        const popupModal = document.getElementById('popup-modal');
+        const popupMessage = document.getElementById('popup-message');
+        const closePopupBtn = popupModal ? popupModal.querySelector('.close-button') : null;
+        // Kullanılamayan Linkler
+        const unavailableLinks = document.querySelectorAll('.unavailable-link'); // Bu sınıfı kullanan tüm linkler
+
+        // --- Durum Değişkenleri ---
+        let currentTestIndex = -1;
+        let isQuickTestActive = false;
+        const testSequence = ['black', 'white', 'red', 'lime', 'blue', 'gradient', 'grid'];
+
+        // --- Tema İşlevi ---
+        function toggleTheme() { const currentTheme = htmlElement.getAttribute('data-theme'); const newTheme = currentTheme === 'dark' ? 'light' : 'dark'; htmlElement.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); themeCheckbox.checked = (newTheme === 'dark'); }
+        function applyInitialTheme() { const savedTheme = localStorage.getItem('theme'); const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; let currentTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light'); htmlElement.setAttribute('data-theme', currentTheme); themeCheckbox.checked = (currentTheme === 'dark'); }
+        document.getElementById('year').textContent = new Date().getFullYear();
+        applyInitialTheme();
+
+        // --- Popup Modal İşlevi ---
+        function showPopup(message) {
+            if(popupModal && popupMessage) {
+                popupMessage.textContent = message;
+                popupModal.classList.remove('hidden');
+            }
+        }
+        function hidePopup() {
+             if(popupModal) {
+                popupModal.classList.add('hidden');
+             }
+        }
+        // Kapatma butonu ve dışarı tıklama
+        if (closePopupBtn) { closePopupBtn.addEventListener('click', hidePopup); }
+        if (popupModal) { popupModal.addEventListener('click', function(event) { if (event.target === popupModal) { hidePopup(); } }); }
+
+        // Kullanılamayan linkler için popup göster
+        unavailableLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault(); // Linkin gitmesini engelle
+                const message = 'Bu sayfa henüz kullanılamıyor, daha sonra tekrar deneyiniz.';
+                showPopup(message);
+            });
+        });
+
+        // --- EKRAN TESTİ İŞLEVLERİ ---
+        function displayTestPattern(testType) {
+            if (!screenTestOverlay) return;
+            screenTestOverlay.classList.remove('grid-pattern', 'gradient-pattern', 'bw-gradient-pattern');
+            screenTestOverlay.style.backgroundImage = '';
+            screenTestOverlay.style.backgroundColor = '';
+            switch(testType) {
+                case 'red': case 'lime': case 'blue': case 'black': case 'white':
+                    screenTestOverlay.style.backgroundColor = testType; break;
+                case 'grid':
+                    screenTestOverlay.classList.add('grid-pattern');
+                    screenTestOverlay.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim(); break;
+                case 'gradient': screenTestOverlay.classList.add('gradient-pattern'); break;
+                case 'bw_gradient': screenTestOverlay.classList.add('bw-gradient-pattern'); break;
+                case 'default': screenTestOverlay.style.backgroundColor = 'var(--test-overlay-bg)'; break;
+                default: screenTestOverlay.style.backgroundColor = 'var(--test-overlay-bg)';
+            }
+        }
+        function startIndividualTest(testType) {
+             if (!screenTestOverlay || !introMessage) return;
+             isQuickTestActive = false;
+             introMessage.classList.add('hidden');
+             displayTestPattern(testType);
+             screenTestOverlay.classList.add('visible');
+             screenTestOverlay.requestFullscreen().catch(err => { console.error(`Tam ekran modu başlatılamadı: ${err.message} (${err.name})`); });
+             document.body.style.overflow = 'hidden';
+        }
+        function displayNextTest() {
+            currentTestIndex++;
+            if (currentTestIndex < testSequence.length) { displayTestPattern(testSequence[currentTestIndex]); }
+            else { stopQuickTest(); }
+        }
+        function displayPreviousTest() {
+            if (currentTestIndex <= 0) { currentTestIndex = 0; return; }
+            currentTestIndex--; displayTestPattern(testSequence[currentTestIndex]);
+        }
+        function startQuickTest() {
+            if (!screenTestOverlay || !introMessage) return;
+            isQuickTestActive = true; currentTestIndex = -1;
+            screenTestOverlay.requestFullscreen().then(() => {
+                 displayTestPattern('default'); introMessage.classList.remove('hidden');
+                 screenTestOverlay.classList.add('visible'); document.body.style.overflow = 'hidden';
+                 document.addEventListener('keydown', handleQuickTestKeys);
+            }).catch(err => { console.error(`Hızlı Test: Tam ekran modu başlatılamadı: ${err.message} (${err.name})`); isQuickTestActive = false; });
+        }
+        function stopQuickTest() { if (document.fullscreenElement === screenTestOverlay) { document.exitFullscreen().catch(err => console.error("Tam ekrandan çıkılamadı:", err)); } }
+        function handleQuickTestKeys(event) {
+            if (!isQuickTestActive) return;
+            if (currentTestIndex === -1) { if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'Enter') { event.preventDefault(); introMessage.classList.add('hidden'); displayNextTest(); } }
+            else { if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'Enter') { event.preventDefault(); displayNextTest(); } else if (event.key === 'ArrowLeft') { event.preventDefault(); displayPreviousTest(); } }
+        }
+        function cleanupAfterTest() {
+            if (!screenTestOverlay || !introMessage) return;
+            introMessage.classList.add('hidden'); screenTestOverlay.classList.remove('visible');
+            document.removeEventListener('keydown', handleQuickTestKeys); document.body.style.overflow = '';
+            isQuickTestActive = false; currentTestIndex = -1;
+        }
+        function handleFullscreenChange() { if (!document.fullscreenElement) { if (screenTestOverlay.classList.contains('visible')) { console.log("Tam ekrandan çıkıldı. Test durduruluyor/temizleniyor."); cleanupAfterTest(); } } }
+
+        // --- Kaydırma Butonu İşlevi ---
+        if (scrollToHzInfoBtn && hzInfoSection) { scrollToHzInfoBtn.addEventListener('click', () => { hzInfoSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); }
+        else { if (!scrollToHzInfoBtn) console.error("Kaydırma butonu bulunamadı!"); if (!hzInfoSection) console.error("Hz Bilgi bölümü bulunamadı!"); }
+
+        // --- Event Listenerları Ayarla ---
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    </script>
+</body>
+</html>

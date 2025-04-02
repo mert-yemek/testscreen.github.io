@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klavye Testi - Bilgisayar Donanım Test Merkezi</title>
+    <style>
+        /* --- TEMEL DEĞİŞKENLER --- */
+        :root {
+            --bg-color: #1e1e1e; --card-bg: #2d2d2d; --text-color: #f0f0f0;
+            --text-secondary: #d0d0d0; --primary-color: #3498db; --primary-hover: #2980b9;
+            --header-bg: #252525; --nav-bg: #2a2a2a; --footer-bg: #252525;
+            --dropdown-bg: #333333; --modal-overlay: rgba(0,0,0,0.6);
+            --key-bg: #4a4a4a;
+            --key-text: #f0f0f0;
+            --key-border: #333333;
+            --key-pressed-bg: #ffffff; /* Beyaz - Basınca */
+            --key-pressed-text: #333333;
+            --key-pressed-border: #dddddd;
+            --key-tested-bg: #3498db; /* Mavi - Bırakınca (Test edildi) */
+            --key-tested-text: white;
+            --key-tested-border: #2980b9;
+            --info-box-bg: #252525;
+        }
+        /* --- AÇIK TEMA DEĞİŞKENLERİ --- */
+        [data-theme="light"] {
+            --bg-color: #f5f5f5; --card-bg: #ffffff; --text-color: #333333;
+            --text-secondary: #555555; --primary-color: #3498db; --primary-hover: #2980b9;
+            --header-bg: #2c3e50; --nav-bg: #34495e; --footer-bg: #2c3e50;
+            --dropdown-bg: #ffffff; --modal-overlay: rgba(0,0,0,0.4);
+            --key-bg: #e0e0e0;
+            --key-text: #333333;
+            --key-border: #b0b0b0;
+            --key-pressed-bg: #ffffff;
+            --key-pressed-text: #333333;
+            --key-pressed-border: #dddddd;
+            --key-tested-bg: #3498db;
+            --key-tested-text: white;
+            --key-tested-border: #2980b9;
+            --info-box-bg: #eeeeee;
+        }
+        /* --- GENEL STİLLER --- */
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.3s ease, color 0.3s ease; line-height: 1.6; }
+        /* --- HEADER, NAV, FOOTER, MODAL STİLLERİ --- */
+        header { background-color: var(--header-bg); color: var(--text-color); padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center; position: relative; transition: background-color 0.3s ease, color 0.3s ease; }
+        [data-theme="light"] header { color: #f0f0f0; }
+        .theme-switch { position: absolute; top: 1rem; right: 1rem; display: flex; align-items: center; }
+        .theme-switch-label { margin-right: 10px; font-size: 0.9rem; }
+        .switch { position: relative; display: inline-block; width: 60px; height: 30px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 30px; }
+        [data-theme="dark"] .slider { background-color: #555; }
+        [data-theme="light"] input:not(:checked) + .slider { background-color: #ccc; }
+        .slider:before { position: absolute; content: "☀️"; display: flex; align-items: center; justify-content: center; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; color: #333; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        [data-theme="light"] input:checked + .slider { background-color: #2c3e50; }
+        input:checked + .slider:before { transform: translateX(30px); content: "🌙"; }
+        .logo { max-width: 150px; margin-bottom: 1rem; }
+        nav { background-color: var(--nav-bg); padding: 0.5rem; transition: background-color 0.3s ease; }
+        nav ul { list-style-type: none; margin: 0; padding: 0; display: flex; justify-content: center; flex-wrap: wrap; }
+        nav li { margin: 0.2rem 1rem; position: relative; }
+        nav a { color: var(--text-color); text-decoration: none; padding: 0.5rem; display: block; transition: color 0.3s ease, background-color 0.3s ease; border-radius: 4px; }
+        [data-theme="light"] nav a { color: #f0f0f0; }
+        nav a:hover { background-color: rgba(255, 255, 255, 0.1); }
+        [data-theme="light"] nav a:hover { background-color: rgba(255, 255, 255, 0.2); }
+        nav a.active { background-color: var(--primary-color); color: white; [data-theme="light"] & { color: white; } } /* Aktif link stili */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; background-color: var(--dropdown-bg); min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 4px; left: 50%; transform: translateX(-50%); top: 100%; transition: background-color 0.3s ease; padding: 0.5rem 0; }
+        .dropdown-content a { color: var(--text-color); padding: 8px 16px; text-decoration: none; display: block; text-align: left; border-radius: 0; }
+        [data-theme="light"] .dropdown-content a { color: #333333; }
+        .dropdown-content a:hover { background-color: rgba(255, 255, 255, 0.1); }
+        [data-theme="light"] .dropdown-content a:hover { background-color: #eee; }
+        .dropdown:hover .dropdown-content { display: block; }
+        footer { background-color: var(--footer-bg); color: var(--text-color); text-align: center; padding: 1rem; margin-top: 2rem; transition: background-color 0.3s ease, color 0.3s ease; }
+        [data-theme="light"] footer { color: #f0f0f0; }
+        .modal { position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: var(--modal-overlay); display: flex; align-items: center; justify-content: center; transition: background-color 0.3s ease; }
+        .modal-content { background-color: var(--card-bg); color: var(--text-color); margin: auto; padding: 30px; border: 1px solid rgba(136, 136, 136, 0.5); width: 80%; max-width: 400px; border-radius: 8px; position: relative; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19); text-align: center; transition: background-color 0.3s ease, color 0.3s ease; }
+        .close-button { color: var(--text-secondary); position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; transition: color 0.3s ease; }
+        .close-button:hover, .close-button:focus { color: var(--primary-color); text-decoration: none; cursor: pointer; }
+        .modal.hidden { display: none; }
+        .hidden { display: none !important; }
+
+        /* --- ANA İÇERİK --- */
+        .container { max-width: 1200px; margin: 2rem auto; padding: 1.5rem; background-color: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .container h2 { margin-top: 0; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 1rem;}
+        .container p { color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.7; }
+
+        /* --- KLAVYE TESTİNE ÖZEL STİLLER --- */
+        #key-info { background-color: var(--info-box-bg); padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; min-height: 50px; font-family: 'Courier New', Courier, monospace; color: var(--text-secondary); border: 1px solid var(--key-border); }
+        #key-info span { display: inline-block; margin-right: 1.5rem; color: var(--text-color); font-weight: bold; }
+        #key-info .value { color: var(--primary-color); font-weight: normal; }
+        .keyboard-container { background-color: var(--card-bg); border-radius: 8px; padding: 1rem; margin-bottom: 2rem; transition: background-color 0.3s ease; }
+        .keyboard { display: flex; justify-content: center; align-items: center; padding: 1rem; background-color: var(--info-box-bg); border-radius: 8px; border: 1px solid var(--key-border); max-width: 100%; overflow-x: auto; box-sizing: border-box; }
+        .keyboard-frame { display: flex; flex-direction: column; width: max-content; }
+        .keyboard-row { display: flex; margin-bottom: 6px; width: max-content; }
+        .keyboard-row:last-child { margin-bottom: 0; }
+        .key { background-color: var(--key-bg); color: var(--key-text); border: 1px solid var(--key-border); border-radius: 5px; padding: 5px; margin: 0 2px; min-width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 500; text-align: center; box-shadow: 0 2px 0px rgba(0,0,0,0.2); transition: all 0.07s ease; white-space: pre; user-select: none; box-sizing: border-box; flex-shrink: 0; }
+        .key.tested { background-color: var(--key-tested-bg); color: var(--key-tested-text); border-color: var(--key-tested-border); }
+        .key.pressed { background-color: var(--key-pressed-bg); color: var(--key-pressed-text); border-color: var(--key-pressed-border); transform: translateY(2px); box-shadow: none; }
+        .key[data-code="Backspace"], .key[data-code="Tab"], .key[data-code="CapsLock"], .key[data-code="Enter"], .key[data-code="ShiftLeft"], .key[data-code="ShiftRight"] { min-width: 55px; }
+        .key[data-code="Backspace"] { min-width: 80px; } .key[data-code="Tab"] { min-width: 60px; } .key[data-code="CapsLock"] { min-width: 75px; } .key[data-code="Enter"] { min-width: 95px; } .key[data-code="ShiftLeft"] { min-width: 100px; } .key[data-code="ShiftRight"] { min-width: 120px; }
+        .key[data-code="ControlLeft"], .key[data-code="MetaLeft"], .key[data-code="AltLeft"], .key[data-code="AltRight"], .key[data-code="MetaRight"], .key[data-code="ContextMenu"], .key[data-code="ControlRight"] { min-width: 55px; }
+        .key[data-code="Space"] { min-width: 300px; flex-grow: 1; }
+        .key.placeholder { min-width: 40px; visibility: hidden; background: none; border: none; box-shadow: none;}
+        .key[data-code="NumpadAdd"], .key[data-code="NumpadEnter"] { height: 86px; }
+        .keyboard-status { text-align: center; margin-top: 1.5rem; font-size: 1rem; color: var(--text-secondary);}
+        .keyboard-status span { color: var(--text-color); font-weight: bold; }
+        #reset-button { display: inline-block; background-color: #e74c3c; color: white; padding: 0.7rem 1.3rem; border-radius: 4px; text-decoration: none; margin-top: 1rem; transition: background-color 0.3s ease; font-weight: 500; border: none; cursor: pointer; font-size: 1rem; }
+        #reset-button:hover { background-color: #c0392b; }
+        .center-button { text-align: center; margin-top: 1.5rem;}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="theme-switch">
+            <span class="theme-switch-label">Tema:</span>
+            <label class="switch">
+                <input type="checkbox" id="theme-checkbox" onclick="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <img src="https://placehold.co/150x80/2c3e50/f0f0f0?text=Logo" alt="Bilgisayar Kasası" class="logo">
+        <h1>Bilgisayar Donanım Test Merkezi</h1>
+        <p>Klavye Testi</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Ana Sayfa</a></li>
+            <li class="dropdown">
+                <a href="#">Testler</a>
+                <div class="dropdown-content">
+                    <a href="ekran.html">Ekran Testi</a>
+                    <a href="klavye.html" class="active">Klavye Testi</a> <a href="mouse.html">Fare Testi</a>
+                    <a href="#" class="unavailable-link">Ses Testi</a>
+                    <a href="#" class="unavailable-link">Ağ Hızı Testi</a>
+                </div>
+            </li>
+            <li><a href="#" class="unavailable-link">Hızlı Uygulama İndirme Yardımcısı</a></li>
+            <li><a href="#" id="about-link" class="unavailable-link">Hakkımızda</a></li>
+            <li><a href="#" class="unavailable-link">İletişim</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <section class="keyboard-container">
+             <h2>Klavye Testi</h2>
+             <p>Klavyenizdeki tuşlara basın. Bastığınız tuş aşağıdaki görsel klavyede vurgulanacak (beyaz) ve bilgileri gösterilecektir. Tuşu bıraktığınızda test edildiğini belirtmek için mavi renkte kalacaktır. F tuşları, Alt, Menü, Yön tuşları gibi tarayıcı/işletim sistemi kısayolları bu test sırasında engellenmiştir.</p>
+
+             <div id="key-info">
+                <span>Son Basılan Tuş:</span> <span class="value" id="key-value">-</span>
+                <span>Kod:</span> <span class="value" id="code-value">-</span>
+             </div>
+
+             <div class="keyboard">
+                  <div class="keyboard-frame">
+                     <div class="keyboard-row">
+                         <div class="key" data-code="Escape">Esc</div>
+                         <div class="key placeholder" style="width: 20px;"></div> <div class="key" data-code="F1">F1</div>
+                         <div class="key" data-code="F2">F2</div>
+                         <div class="key" data-code="F3">F3</div>
+                         <div class="key" data-code="F4">F4</div>
+                          <div class="key placeholder" style="width: 10px;"></div> <div class="key" data-code="F5">F5</div>
+                         <div class="key" data-code="F6">F6</div>
+                         <div class="key" data-code="F7">F7</div>
+                         <div class="key" data-code="F8">F8</div>
+                          <div class="key placeholder" style="width: 10px;"></div> <div class="key" data-code="F9">F9</div>
+                         <div class="key" data-code="F10">F10</div>
+                         <div class="key" data-code="F11">F11</div>
+                         <div class="key" data-code="F12">F12</div>
+                          <div class="key placeholder" style="width: 20px;"></div> <div class="key" data-code="PrintScreen">PrtSc</div>
+                          <div class="key" data-code="ScrollLock">ScrLk</div>
+                          <div class="key" data-code="Pause">Pause</div>
+                     </div>
+                      <div class="keyboard-row">
+                         <div class="key" data-code="Backquote">` ~</div>
+                         <div class="key" data-code="Digit1">1 !</div>
+                         <div class="key" data-code="Digit2">2 @</div>
+                         <div class="key" data-code="Digit3">3 #</div>
+                         <div class="key" data-code="Digit4">4 $</div>
+                         <div class="key" data-code="Digit5">5 %</div>
+                         <div class="key" data-code="Digit6">6 ^</div>
+                         <div class="key" data-code="Digit7">7 &</div>
+                         <div class="key" data-code="Digit8">8 *</div>
+                         <div class="key" data-code="Digit9">9 (</div>
+                         <div class="key" data-code="Digit0">0 )</div>
+                         <div class="key" data-code="Minus">- _</div>
+                         <div class="key" data-code="Equal">= +</div>
+                         <div class="key" data-code="Backspace">Backspace</div>
+                          <div class="key placeholder" style="width: 10px;"></div> <div class="key" data-code="Insert">Ins</div>
+                          <div class="key" data-code="Home">Home</div>
+                          <div class="key" data-code="PageUp">PgUp</div>
+                          <div class="key placeholder" style="width: 10px;"></div> <div class="key" data-code="NumLock">NumLk</div>
+                          <div class="key" data-code="NumpadDivide">/</div>
+                          <div class="key" data-code="NumpadMultiply">*</div>
+                          <div class="key" data-code="NumpadSubtract">-</div>
+                     </div>
+                      <div class="keyboard-row">
+                         <div class="key" data-code="Tab">Tab</div>
+                         <div class="key" data-code="KeyQ">Q</div>
+                         <div class="key" data-code="KeyW">W</div>
+                         <div class="key" data-code="KeyE">E</div>
+                         <div class="key" data-code="KeyR">R</div>
+                         <div class="key" data-code="KeyT">T</div>
+                         <div class="key" data-code="KeyY">Y</div>
+                         <div class="key" data-code="KeyU">U</div>
+                         <div class="key" data-code="KeyI">I</div>
+                         <div class="key" data-code="KeyO">O</div>
+                         <div class="key" data-code="KeyP">P</div>
+                         <div class="key" data-code="BracketLeft">[ {</div>
+                         <div class="key" data-code="BracketRight">] }</div>
+                         <div class="key" data-code="Backslash">\ |</div>
+                          <div class="key placeholder" style="width: 10px;"></div> <div class="key" data-code="Delete">Del</div>
+                          <div class="key" data-code="End">End</div>
+                          <div class="key" data-code="PageDown">PgDn</div>
+                          <div class="key placeholder" style="width: 10px;"></div> <div class="key" data-code="Numpad7">7</div>
+                          <div class="key" data-code="Numpad8">8</div>
+                          <div class="key" data-code="Numpad9">9</div>
+                          <div class="key" data-code="NumpadAdd" style="height: 86px;">+</div> </div>
+                     <div class="keyboard-row">
+                         <div class="key" data-code="CapsLock">CapsLock</div>
+                         <div class="key" data-code="KeyA">A</div>
+                         <div class="key" data-code="KeyS">S</div>
+                         <div class="key" data-code="KeyD">D</div>
+                         <div class="key" data-code="KeyF">F</div>
+                         <div class="key" data-code="KeyG">G</div>
+                         <div class="key" data-code="KeyH">H</div>
+                         <div class="key" data-code="KeyJ">J</div>
+                         <div class="key" data-code="KeyK">K</div>
+                         <div class="key" data-code="KeyL">L</div>
+                         <div class="key" data-code="Semicolon">; :</div>
+                         <div class="key" data-code="Quote">' "</div>
+                         <div class="key" data-code="Enter">Enter</div>
+                          <div class="key placeholder" style="width: 128px;"></div> <div class="key" data-code="Numpad4">4</div>
+                          <div class="key" data-code="Numpad5">5</div>
+                          <div class="key" data-code="Numpad6">6</div>
+                          </div>
+                      <div class="keyboard-row">
+                         <div class="key" data-code="ShiftLeft">Shift</div>
+                         <div class="key" data-code="KeyZ">Z</div>
+                         <div class="key" data-code="KeyX">X</div>
+                         <div class="key" data-code="KeyC">C</div>
+                         <div class="key" data-code="KeyV">V</div>
+                         <div class="key" data-code="KeyB">B</div>
+                         <div class="key" data-code="KeyN">N</div>
+                         <div class="key" data-code="KeyM">M</div>
+                         <div class="key" data-code="Comma">, &lt;</div>
+                         <div class="key" data-code="Period">. &gt;</div>
+                         <div class="key" data-code="Slash">/ ?</div>
+                         <div class="key" data-code="ShiftRight">Shift</div>
+                          <div class="key placeholder" style="width: 60px;"></div> <div class="key" data-code="ArrowUp">↑</div>
+                          <div class="key placeholder" style="width: 60px;"></div> <div class="key" data-code="Numpad1">1</div>
+                          <div class="key" data-code="Numpad2">2</div>
+                          <div class="key" data-code="Numpad3">3</div>
+                          <div class="key" data-code="NumpadEnter" style="height: 86px;">Ent</div> </div>
+                      <div class="keyboard-row">
+                         <div class="key" data-code="ControlLeft">Ctrl</div>
+                         <div class="key" data-code="MetaLeft">Win</div>
+                         <div class="key" data-code="AltLeft">Alt</div>
+                         <div class="key" data-code="Space">Space</div>
+                         <div class="key" data-code="AltRight">Alt</div>
+                         <div class="key" data-code="MetaRight">Win</div>
+                         <div class="key" data-code="ContextMenu">Menu</div>
+                         <div class="key" data-code="ControlRight">Ctrl</div>
+                          <div class="key placeholder" style="width: 10px;"></div> <div class="key" data-code="ArrowLeft">←</div>
+                          <div class="key" data-code="ArrowDown">↓</div>
+                          <div class="key" data-code="ArrowRight">→</div>
+                           <div class="key placeholder" style="width: 10px;"></div> <div class="key" data-code="Numpad0" style="min-width: 88px;">0</div> <div class="key" data-code="NumpadDecimal">.</div>
+                          </div>
+                 </div> </div> <div class="keyboard-status">
+                 <p>Test edilen tuş sayısı: <span id="tested-keys-count">0</span> / <span id="total-keys-count">0</span></p>
+             </div>
+
+             <div class="center-button">
+                 <button id="reset-button">Vurguları Sıfırla</button>
+             </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; <span id="year"></span> Bilgisayar Donanım Test Merkezi | Tüm Hakları Saklıdır</p>
+    </footer>
+
+    <div id="popup-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="popup-message">Bu sayfa henüz kullanılamıyor, daha sonra tekrar deneyiniz.</p>
+        </div>
+    </div>
+
+    <script>
+        const htmlElement = document.documentElement;
+        const themeCheckbox = document.getElementById('theme-checkbox');
+        const keyValue = document.getElementById('key-value');
+        const codeValue = document.getElementById('code-value');
+        const keyboardKeys = document.querySelectorAll('.keyboard .key:not(.placeholder)');
+        const resetButton = document.getElementById('reset-button');
+        const testedKeysSpan = document.getElementById('tested-keys-count');
+        const totalKeysSpan = document.getElementById('total-keys-count');
+        // Popup Modal Elementleri
+        const popupModal = document.getElementById('popup-modal');
+        const popupMessage = document.getElementById('popup-message');
+        const closePopupBtn = popupModal ? popupModal.querySelector('.close-button') : null;
+        // Kullanılamayan Linkler
+        const unavailableLinks = document.querySelectorAll('.unavailable-link');
+
+        // --- Tema İşlevi ---
+        function toggleTheme() { const currentTheme = htmlElement.getAttribute('data-theme'); const newTheme = currentTheme === 'dark' ? 'light' : 'dark'; htmlElement.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); themeCheckbox.checked = (newTheme === 'dark'); }
+        function applyInitialTheme() { const savedTheme = localStorage.getItem('theme'); const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; let currentTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light'); htmlElement.setAttribute('data-theme', currentTheme); themeCheckbox.checked = (currentTheme === 'dark'); }
+        document.getElementById('year').textContent = new Date().getFullYear();
+        applyInitialTheme();
+
+        // --- Popup Modal İşlevi ---
+        function showPopup(message) {
+            if(popupModal && popupMessage) {
+                popupMessage.textContent = message;
+                popupModal.classList.remove('hidden');
+            }
+        }
+        function hidePopup() {
+             if(popupModal) {
+                popupModal.classList.add('hidden');
+             }
+        }
+        // Kapatma butonu ve dışarı tıklama
+        if (closePopupBtn) { closePopupBtn.addEventListener('click', hidePopup); }
+        if (popupModal) { popupModal.addEventListener('click', function(event) { if (event.target === popupModal) { hidePopup(); } }); }
+
+        // Kullanılamayan linkler için popup göster
+        unavailableLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const message = 'Bu sayfa henüz kullanılamıyor, daha sonra tekrar deneyiniz.';
+                showPopup(message);
+            });
+        });
+
+
+        // --- KLAVYE TESTİ İŞLEVLERİ ---
+        let testedKeysSet = new Set();
+
+        if(totalKeysSpan) totalKeysSpan.textContent = keyboardKeys.length;
+        if(testedKeysSpan) testedKeysSpan.textContent = testedKeysSet.size;
+
+        function findKeyElement(code) {
+             return document.querySelector(`.key[data-code="${code}"]`);
+        }
+
+        function handleKeyDown(event) {
+            const preventDefaultCodes = [ 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'Tab', 'ContextMenu', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End', 'Insert', 'Delete', 'PrintScreen', 'ScrollLock', 'Pause', 'MetaLeft', 'MetaRight' ];
+            if (preventDefaultCodes.includes(event.code) || event.altKey) { event.preventDefault(); }
+
+            const keyElement = findKeyElement(event.code);
+            let displayKey = event.key; let displayCode = event.code;
+            if (event.code === 'AltRight') { displayKey = (event.key === "AltGraph") ? "AltGraph" : "AltGr"; }
+
+            if (keyValue) keyValue.textContent = displayKey;
+            if (codeValue) codeValue.textContent = displayCode;
+
+            if (keyElement) {
+                if (event.code === 'AltRight' && event.ctrlKey) { const ctrlLeft = findKeyElement('ControlLeft'); if(ctrlLeft) ctrlLeft.classList.remove('pressed', 'tested'); }
+                keyElement.classList.remove('tested');
+                keyElement.classList.add('pressed');
+            } else { if(event.code !== 'Fn') { console.log("Eşleşen görsel tuş bulunamadı:", event.code); } }
+        }
+
+        function handleKeyUp(event) {
+            const keyElement = findKeyElement(event.code);
+            if (keyElement) {
+                keyElement.classList.remove('pressed');
+                keyElement.classList.add('tested');
+                if (!testedKeysSet.has(event.code)) {
+                    testedKeysSet.add(event.code);
+                    if(testedKeysSpan) testedKeysSpan.textContent = testedKeysSet.size;
+                }
+            }
+        }
+
+        function resetTest() {
+            keyboardKeys.forEach(key => { key.classList.remove('pressed', 'tested'); });
+            testedKeysSet.clear();
+            if(testedKeysSpan) testedKeysSpan.textContent = testedKeysSet.size;
+            if (keyValue) keyValue.textContent = '-'; if (codeValue) codeValue.textContent = '-';
+        }
+
+        // --- Event Listenerları Ayarla ---
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+        if (resetButton) { resetButton.addEventListener('click', resetTest); }
+
+    </script>
+</body>
+</html>
